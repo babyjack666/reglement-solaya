@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Règlement Solaya RP</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout : barre de recherche en tête façon moteur, résultats en liste, accueil = index des catégories */
+:root{
+  --bg:#f3f5f8; --surface:#ffffff; --fg:#141a24; --muted:#5b6575; --line:#dde2ea;
+  --accent:#e8930c; --accent-ink:#8a5300; --accent-soft:#fff1da;
+  --warn:#b4231a; --warn-soft:#fdecea; --new:#1f6f4a; --new-soft:#e4f4ec;
+  --mark:#ffe08a;
+  --display:"Sora","Segoe UI",system-ui,sans-serif;
+  --body:"Inter","Segoe UI",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e131b; --surface:#161d28; --fg:#e8ecf2; --muted:#9aa4b4; --line:#263042;
+  --accent:#f5a524; --accent-ink:#ffc766; --accent-soft:#2a2214;
+  --warn:#ff8a80; --warn-soft:#2e1a1a; --new:#6fd3a0; --new-soft:#14261d; --mark:#6b5310; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e131b; --surface:#161d28; --fg:#e8ecf2; --muted:#9aa4b4; --line:#263042;
+  --accent:#f5a524; --accent-ink:#ffc766; --accent-soft:#2a2214;
+  --warn:#ff8a80; --warn-soft:#2e1a1a; --new:#6fd3a0; --new-soft:#14261d; --mark:#6b5310; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.wrap{max-width:860px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+header .wrap{padding-block:14px 12px;display:flex;flex-direction:column;gap:10px}
+.brand{display:flex;align-items:center;gap:10px;cursor:pointer;width:max-content}
+.sun{width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 50% 50%,var(--accent) 45%,transparent 47%),repeating-conic-gradient(var(--accent) 0 8deg,transparent 8deg 30deg);flex:none}
+.brand b{font-family:var(--display);font-weight:800;font-size:18px;letter-spacing:-.01em}
+.brand span{color:var(--muted);font-size:13px}
+.search{position:relative}
+.search input{width:100%;font:500 17px var(--body);color:var(--fg);background:var(--bg);border:1.5px solid var(--line);border-radius:999px;padding:12px 44px 12px 46px;outline:none}
+.search input:focus{border-color:var(--accent);background:var(--surface);box-shadow:0 0 0 4px var(--accent-soft)}
+.search svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.search kbd{position:absolute;right:16px;top:50%;transform:translateY(-50%);font:500 12px var(--mono);color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -2px;padding:2px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;font:500 13px var(--body);color:var(--muted);background:transparent;border:1px solid var(--line);border-radius:999px;padding:5px 12px;cursor:pointer}
+.chip:hover{color:var(--fg);border-color:var(--muted)}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.chip:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+main .wrap{padding-block:22px 60px}
+.meta{color:var(--muted);font-size:13px;margin-bottom:14px}
+h2.sec{font-family:var(--display);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:28px 0 10px}
+h2.sec:first-child{margin-top:4px}
+.cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.cat{text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;cursor:pointer;color:var(--fg);display:flex;flex-direction:column;gap:4px}
+.cat:hover{border-color:var(--accent)}
+.cat b{font-family:var(--display);font-size:16px;font-weight:700}
+.cat small{color:var(--muted);font-size:13px}
+.cat .n{font:500 12px var(--mono);color:var(--accent-ink)}
+.rule{padding:14px 0 16px;border-bottom:1px solid var(--line);scroll-margin-top:150px}
+.rule:target,.rule.flash{background:linear-gradient(90deg,var(--accent-soft),transparent 80%);margin:0 -12px;padding-left:12px;padding-right:12px;border-radius:8px}
+.crumb{font-size:12.5px;color:var(--muted);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.crumb .src{font:500 11px var(--mono);border:1px solid var(--line);border-radius:4px;padding:0 5px}
+.rule h3{font-family:var(--display);font-size:18px;font-weight:700;margin:3px 0 6px;color:var(--fg);text-wrap:balance}
+.rule h3 a{color:inherit;text-decoration:none}
+.rule h3 a:hover{text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:3px}
+.body{max-width:68ch;color:var(--fg)}
+.body p{margin:0 0 6px}
+.body ul{margin:4px 0 6px;padding-left:20px}
+.body li{margin:2px 0}
+mark{background:var(--mark);color:inherit;border-radius:2px;padding:0 1px}
+.badge{font:600 11px var(--body);letter-spacing:.04em;text-transform:uppercase;border-radius:4px;padding:1px 6px}
+.b-new{background:var(--new-soft);color:var(--new)}
+.b-warn{background:var(--warn-soft);color:var(--warn)}
+.note{margin-top:8px;max-width:68ch;font-size:13.5px;background:var(--warn-soft);color:var(--fg);border-left:3px solid var(--warn);padding:7px 10px;border-radius:0 6px 6px 0}
+.note b{color:var(--warn)}
+.actions{display:flex;gap:6px;margin-top:8px}
+.act{font:500 12.5px var(--body);color:var(--muted);background:none;border:1px solid var(--line);border-radius:6px;padding:3px 9px;cursor:pointer}
+.act:hover{color:var(--fg);border-color:var(--muted)}
+.empty{padding:40px 0;color:var(--muted)}
+.empty b{color:var(--fg);font-family:var(--display);font-size:18px;display:block;margin-bottom:6px}
+.hint{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.hint button{font:500 13px var(--body);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px 11px;color:var(--fg);cursor:pointer}
+.hint button:hover{border-color:var(--accent)}
+.conf{display:flex;flex-direction:column;gap:8px}
+.confitem{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--warn);border-radius:8px;padding:10px 14px;font-size:14px}
+.confitem b{font-family:var(--display)}
+.confitem button{background:none;border:0;padding:0;color:var(--accent-ink);font:500 13px var(--body);cursor:pointer;text-decoration:underline;text-underline-offset:2px;margin-right:10px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:14px;z-index:20}
+@media (prefers-reduced-motion:no-preference){.rule.flash{transition:background 1.2s}}
+@media (max-width:520px){.search kbd{display:none}.rule h3{font-size:17px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brand" id="home" role="button" tabindex="0" aria-label="Retour à l'accueil"><div class="sun"></div><b>Solaya RP</b><span>Règlement</span></div>
+    <div class="search">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" autocomplete="off" placeholder="Cherche une règle : otage, pit, argent sale, alliance…" aria-label="Rechercher dans le règlement">
+      <kbd>/</kbd>
+    </div>
+    <div class="chips" id="chips" role="toolbar" aria-label="Catégories"></div>
+  </div>
+</header>
+<main><div class="wrap" id="out"></div></main>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const CATS = [
+ {id:"general", name:"Règles générales", desc:"Philosophie, comportement, personnage, coma, hôpital"},
+ {id:"lexique", name:"Lexique RP", desc:"PowerGaming, NoFear, NLR, MetaGaming…"},
+ {id:"illegal", name:"Illégal", desc:"Gangs, orgas, GunFight, armes, otages, racket"},
+ {id:"creation", name:"Création de gang", desc:"Conditions, trésorerie, dossier RP"},
+ {id:"independants", name:"Indépendants", desc:"Groupes non officiels, revendication, limites"},
+ {id:"additifs", name:"Additifs", desc:"Mises à jour récentes : elles priment"},
+ {id:"lspd", name:"LSPD / SASP", desc:"Règlement interne des forces de l'ordre"},
+ {id:"ems", name:"EMS", desc:"Règlement interne médical + obligations des patients"},
+ {id:"entreprises", name:"Entreprises", desc:"Patrons, runs, économie, incentives"},
+];
+const SRC = {G:"Règlement serveur", L:"Règlement LSPD", E:"Règlement EMS", A:"Annonce Discord"};
+
+/* r(id, cat, section, titre, texte, tags, source, extra) — lignes "- " = puces */
+const R = [];
+function r(id,cat,sec,title,text,tags,src,x){R.push(Object.assign({id,cat,sec,title,text,tags:tags||"",src:src||"G"},x||{}))}
+
+/* ===== GÉNÉRAL ===== */
+r("philosophie","general","Philosophie","Philosophie du serveur","La priorité est le divertissement à travers des scènes cohérentes. On privilégie l'interaction entre joueurs plutôt qu'un coma ou une mort RP. À proscrire :\n- Braquer ou tuer sans rien demander\n- EMS : soigner sans un minimum de discours\n- Police : arrêter sans dire un mot\n- Faire un acte illégal (drogue, braquage, banque, ATM) 30 minutes avant ou après un reboot\n- Ne pas respecter la hiérarchie du fear (patrons, leads, forces de l'ordre, EMS)","reboot 30 minutes interaction");
+r("reboot","general","Philosophie","Illégal et reboots","Interdiction de faire un acte illégal (vente de drogue, braquage, banque, ATM) 30 minutes avant et 30 minutes après les reboots.","redemarrage restart heure");
+r("discrim","general","Règlement global","Discriminations et comportements","Toute forme de discrimination est interdite (homophobie, racisme…). Déféquer, cracher ou uriner sur un joueur est interdit. Les scènes de viol sont strictement interdites sous peine de bannissement permanent. Les trolls et la mentalité « GF / FPS » ne sont pas les bienvenus.","racisme insulte troll ban");
+r("reconnaissance","general","Règlement global","Visage masqué et reconnaissance","Un personnage ne peut pas être reconnu par sa voix ou son visage si celui-ci est couvert à moitié ou plus. Un accent peut donner un indice mais ne suffit pas pour identifier quelqu'un.","masque cagoule voix identifier");
+r("torture","general","Règlement global","Tortures et mutilations","Les tortures et mutilations irréversibles nécessitent l'accord HRP du joueur concerné et du staff (ex : couper une jambe).","mutilation accord");
+r("vol-services","general","Règlement global","Vol de véhicules de services publics","Il est interdit de voler les véhicules des services publics : EMS, militaires, gouvernement, FIB, mécanos…\nException : les véhicules de police peuvent être volés avec une raison RP (jamais pour troller), et la police peut alors tirer à vue sans sommation.","voiture police ems");
+r("armes-lourdes-inv","general","Règlement global","Armes lourdes et équipement FDO","Une seule arme lourde dans l'inventaire (gouvernement et SASP compris). Interdit de posséder des armes, tenues ou équipements réservés aux forces de l'ordre / services publics si on n'en fait pas partie. Démissionner sans rendre tenues et équipement expose à un wipe.","inventaire tenue police");
+r("vehicules-run","general","Règlement global","Véhicules pour les runs","Interdit de travailler avec un véhicule personnel ou inadapté. Pour récolter, traiter et vendre, utiliser les véhicules de service, d'entreprise ou les camions de location / boutique (Mule, Benson, Pounder, Rune, Zdanov), métiers du pôle emploi compris.","camion farm recolte");
+r("deuil","general","Règlement global","Wipe / mort RP : faire le deuil","Après un wipe ou une mort RP, interdit de faire allusion à son ancien personnage ou de trouver des subterfuges (« je suis le cousin de… », « quelqu'un de ma famille m'a dit… »).","ancien personnage cousin famille");
+r("raccourcis","general","Règlement global","Raccourcis RP","Les raccourcis RP sont interdits : une veste jaune ne fait pas de quelqu'un un membre des Vagos.","couleur vetement");
+r("voix","general","Modificateur de voix","Modificateur de voix","Autorisé s'il reste cohérent et validé par le staff. Une voix trop robotisée ou moqueuse peut entraîner avertissement ou bannissement ; bannissement définitif en cas de récidive.","voice changer");
+r("personnage","general","Personnage","Création du personnage","Personnage cohérent avec son background. Les personnages trolls sont wipe sans préavis. Interdit d'utiliser un jeu de mots ou le nom d'une célébrité réelle comme nom. Un accent est conseillé.","nom prenom background");
+r("wipe","general","Wipe","Wipe de personnage","Remise à zéro du personnage (objets, apparence, histoire). Les véhicules boutique restent sur le compte, les objets/argent des caisses disparaissent.\n- Interdit de transférer objets, véhicules, armes, argent ou propriétés en anticipant le wipe d'un ami (héritage, donation…)\n- Interdit de demander un wipe avec un compte bancaire négatif\n- Le nouveau personnage ne peut pas avoir les mêmes traits ou une histoire similaire","reset nouveau perso");
+r("coma","general","Coma","Coma","- Interdit d'humilier ou d'insulter (trash talk) un joueur dans le coma\n- Obligation d'oublier les 30 dernières minutes\n- Strictement interdit de parler dans le coma","mort amnesie 30 minutes nlr");
+r("mineurs","general","Personnages mineurs","Personnages mineurs","Le serveur est interdit aux mineurs. Un joueur peut incarner un personnage mineur s'il n'assiste à aucune scène inadaptée à son âge (aucun ped enfant fourni).","enfant age");
+r("vetements","general","Cohérence vêtements","Cohérence RP : vêtements","- Le masque est réservé aux scènes illégales (pas pour manger, réparer, se promener)\n- Vêtements « crack » ou troll interdits\n- Visages troll ou « très moche » interdits\n- Accessoires incohérents interdits\n- Tenues cohérentes avec le background","masque tenue");
+r("vocal-hrp","general","Vocal HRP","Parler HRP en jeu","Strictement interdit de parler HRP en jeu, y compris par insinuation (« je vais appeler un papillon », « visa »…). Le double vocal est interdit : utilisez téléphone, messages de groupe ou radio.","hrp discord double vocal papillon visa");
+r("hopital","general","Hôpital","Respect du RP à l'hôpital","Interdit de quitter discrètement l'hôpital, de se cacher pour ne pas rendre ses armes ou d'esquiver une scène EMS (consultation, opération). Après un GunFight, une chute ou un accident, la scène avec les EMS doit être jouée.","fuir hopital ems");
+r("fairplay","general","FairPlay","FairPlay","On joue AVEC les autres, le but n'est pas de les dégoûter du jeu, surtout les novices. Restez classe en braquage, modérez les insultes et les comportements « cancer ».","respect novice");
+r("transfert","general","Transfert P1-P2","Transfert entre personnages","Interdit de transférer des biens du personnage 1 vers le personnage 2, ou de donner armes / argent / véhicules avant un wipe ou une mort RP. Interdit aussi de changer volontairement son jeu en sachant qu'on va wipe.","p1 p2 double perso");
+r("bagarre","general","Bagarre","Bagarre et FreePunch","Interdit de se battre sans raison RP. Jouez votre pain. UseBug (spam, etc.) interdit.","frapper coup poing");
+r("mort-rp","general","Mort RP","Mort RP","Un personnage peut prendre une mort RP à tout moment :\n- Attention à vos actions envers les forces de l'ordre et les autres groupes\n- Être capturé plusieurs fois par le même groupe peut y mener\n- Une scène de NoFear mène directement à une mort RP","mrp wipe");
+r("tir-abusif","general","Armes","Tirs abusifs","Interdit de tirer sans raison. Privilégiez la parole. Réfléchissez aux répercussions avant de vous engager dans une fusillade.","tirer fusillade");
+
+/* ===== LEXIQUE ===== */
+const LEX = [
+ ["PowerGaming","Faire en jeu des choses irréalisables dans la réalité (mur à 250 km/h puis rouler normalement, chute de 10 m sans blessure).","pg"],
+ ["MetaGaming","Utiliser en jeu une information obtenue hors jeu (Discord, Twitch, YouTube…).","meta stream"],
+ ["Double voc / Mixe","Mélanger RP et HRP, à l'oral comme à l'écrit.",""],
+ ["NoFear","N'avoir peur de rien (ex : arme sur la tempe sans réaction). Il faut jouer ce que ressent son personnage.","fear peur"],
+ ["FreeKill / FreePunch","Tuer ou frapper quelqu'un sans raison valable.","fk"],
+ ["CarKill","Utiliser un véhicule comme arme pour écraser des gens gratuitement.","voiture ecraser"],
+ ["Revenge Kill","Revenir sur une scène où l'on s'est fait tuer pour tuer le responsable.","vengeance"],
+ ["ForceRP","Forcer lourdement une scène ou un joueur (ex : rouler devant la police pour lancer une course-poursuite).",""],
+ ["Bunny Hop","Courir en sautant (spam Espace) pour aller plus vite ou éviter les balles.","saut espace"],
+ ["Glitcher","Traverser murs ou décors. Si vous êtes bloqué : /report et attendre le staff.","report bloque"],
+ ["UseBug","Exploiter un bug (dupliquer ressources, véhicules…).","bug duplication"],
+ ["NoPain","Ne pas jouer la douleur de ses blessures.","douleur"],
+ ["NLR","Revenir sur une scène où l'on s'est fait tuer, ou se rappeler volontairement des 30 minutes avant un coma.","new life rule coma"],
+ ["Refus de scène","Il faut jouer la scène jusqu'au bout. Désaccord : /report APRÈS la scène, avec un enregistrement (rec, screen).","report rec"],
+ ["Insinuation HRP","Faire comprendre HRP à un joueur qu'il joue mal (« tu vas prendre visa », « t'as pas mal toi », « je vais appeler un papillon »).",""],
+ ["Conduite HRP","Sauts irréalistes interdits. PIT interdit entre civils (privilégier la poursuite). Pas de montagne en véhicule inadapté. Pneu crevé : moins de 100 km/h. Deux pneus crevés ou plus : arrêt dans les 100 m.","pit pneu crevaison"],
+ ["OffRoad","Rouler dans le désert ou en montagne avec des pneus inadaptés. Cayo Perico : SUV, quads, motos.","cayo"],
+ ["Mass RP","Ignorer qu'il existe des quartiers, lieux et citoyens dangereux, ou ne pas reconnaître les couleurs / véhicules d'un groupe.",""],
+ ["ALT + F4","Quitter volontairement le jeu pendant une scène.","deco deconnexion"],
+ ["Unité X","Réapparaître volontairement à l'hôpital alors qu'une scène vous concernant n'est pas finie.","respawn"],
+ ["Double Vocal","Être sur Discord, Skype ou autre vocal en étant en jeu.","discord"],
+ ["Crédibilité esthétique","Les cheveux poussent lentement : impossible de passer de chauve à cheveux longs en moins de 2 jours.","cheveux"],
+ ["Retour quartier / zone safe","Interdit en course-poursuite d'aller dans un quartier, une zone safe ou une propriété. Attendre au moins 5 minutes après la poursuite (sauf cohérence RP, ex : protection d'un politique).","poursuite planque"],
+ ["Streamhack","Regarder un stream (Twitch…) en étant en jeu. Peut entraîner un bannissement définitif.","twitch"],
+ ["Vente / achat argent réel","Strictement interdit en jeu comme sur le Discord.","irl euros"],
+ ["Mort RP & Wipe","La mort RP est une fin narrative du personnage ; le wipe est l'effacement technique de ses données.",""],
+ ["FairPlay","Respecter les règles et l'esprit du RP, accepter de gagner comme de perdre dans la dignité.",""],
+ ["Cohérence RP","Les belles scènes naissent de la cohérence des personnages et des situations.",""],
+];
+LEX.forEach(([t,d,tg])=>r("lex-"+t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/-$/,""),"lexique","Définitions",t,d,tg));
+
+/* ===== ILLÉGAL ===== */
+r("validation-groupe","illegal","Général","Se déclarer gang ou orga","Strictement interdit de se proclamer gang ou orga, ou de créer des personnages d'un groupe, sans validation du projet.","validation projet");
+r("slots","illegal","Slots maximums","Nombre de membres","- Organisation : 30 membres, 20 max sur scène\n- Gang : 25 membres, 15 max sur scène\n- MC : 23 membres\nLe Discord du groupe ne doit pas dépasser ce nombre de membres avec le rôle (seuls staffs et anciens morts RP en plus). Tenir le référent staff informé des entrées et sorties.","effectif limite membres scene discord");
+r("hors-nationalite","illegal","Recrutement","Recrutement hors nationalité","Jusqu'à 35 % de l'effectif maximum peut avoir une nationalité hors du lore du groupe :\n- Organisations : 10 sur 30\n- Gangs : 8 sur 25\n- MC : 8 sur 23\nCalculé sur l'effectif maximum, pas sur les membres présents.","nationalite quota lore");
+r("rp-illegal","illegal","RôlePlay illégal","Esprit du RP illégal","Le RP illégal ne se résume pas à se connecter à 21 h pour partir en convoi (exclusion voire wipe). Les GunFights ne doivent arriver que s'ils sont inévitables. Ouvrez-vous aux autres joueurs : travail, soirées, events.","gf convoi");
+r("nofear-illegal","illegal","NoFear","Fear obligatoire","Même dans l'illégal, le fear est obligatoire :\n- Face au LSPD / SASP\n- Dans les zones revendiquées\n- Lors d'un convoi braqué, d'un PO ou d'un rush otage","peur police zone");
+r("guerre","illegal","Guerre","Déclaration de guerre","Une guerre exige de vraies raisons RP (sanctions possibles : mort RP, wipe projet). Le groupe dominant doit proposer une « offre fairplay » pour stopper la guerre ; en cas de refus par ego, le staff intervient (wipe projet / conséquences RP).","conflit fairplay");
+r("gunfight","illegal","GunFight & rendez-vous","Règles du GunFight","- Pas de trash, danse ou provocation sur un joueur à terre ou pendant le GF\n- Interdit de se cacher armé dans un coffre pour surgir (tir, kidnapping, braquage)\n- Pas d'animations pendant un GF\n- Coma pendant un GF : interdit de revenir dans la zone pendant 15 minutes minimum\n- Interdit de porter un corps après un GF\n- Vous pouvez quitter la zone rapidement si le GF est fini avant l'arrivée de la police\n- Interdit de porter les couleurs adverses pendant un GF\n- Interdit de prendre en otage / dépouiller un adversaire en train d'être réanimé par les EMS\n- Séquestration limitée à 1 heure\n- Une fois descendu du véhicule, interdit d'y remonter avant la fin du GF","gf fusillade coffre 15 minutes corps vehicule");
+r("rdv","illegal","GunFight & rendez-vous","Rendez-vous","Interdit de tirer pendant un rendez-vous. Faites durer vos scènes sur le long terme.","rdv deal");
+r("hauteur","illegal","GunFight & rendez-vous","Prise de hauteur","Tolérée si modérée et cohérente. Tout abus est lourdement sanctionné : se placer en hauteur pour piéger, rester hors de portée ou prendre l'avantage sans risque, avant ou pendant un GF comme lors d'un RDV.","toit sniper position");
+r("otage-fdo","illegal","Prise d'otage","Prise d'otage d'un agent ou service public","Il faut une bonne raison RP et un but précis pour prendre en otage un agent ou tout membre des services publics (SASP, EMS, gouvernement, avocat…). Sinon : NoFear, incohérence et manque de fairplay. « Mon ami est en garde à vue » n'est pas une raison recevable.","police ems otage gav");
+r("info-illegale","illegal","Information illégale","Partage d'informations illégales","Interdit de donner gratuitement des informations illégales (positions de drogue…). Vous pouvez les vendre, ou missionner des groupes pour les tester avant de les leur confier.","info position drogue");
+r("lead","illegal","Lead","Responsabilités du Lead","- Plus de devoirs que les membres : transmettre vite les informations au staff\n- Suivi du groupe impeccable\n- Éviter les conflits inutiles et la haine HRP envers joueurs, staffs et groupes\n- Cohérence exemplaire et bonne information du groupe","chef leader");
+r("drogue","illegal","Drogue","Contrôle de la drogue","Une organisation ne contrôle qu'une drogue ou un business. Elle peut récupérer une autre drogue mais doit la vendre sous 2 jours maximum. Interdit de s'allier pour attaquer une livraison de matériaux ou un laboratoire.","labo business revendication");
+r("alliances","illegal","Alliances","Alliances entre groupes","Les alliances sont interdites, sauf si elles sont montées par dossier et validées par le staff. Pas de braquage, farm illégal ou aide commune entre membres de groupes différents sans alliance validée.\nMême avec une alliance validée : 2 groupes maximum, et jamais plus de 2 groupes contre une orga ou un gang.","alliance allie dossier");
+r("armes-inventaire","illegal","Armes","Armes et inventaire","Une seule arme de poing et une arme lourde sur soi (ex : pistolet + pompe OK, M4 + pompe interdit). Limite par groupe sur scène : 5 armes lourdes (1 pompe, 2 SMG, 2 fusils d'assaut). Maximum 2 armes identiques par type (sauf SMG). Armes lourdes uniquement en opération, jamais exhibées en zone de masse. Maximum 10 gilets pare-balles par opération et par groupe.","arme lourde smg pompe fusil gilet kevlar");
+r("armes-fdo-vol","illegal","Armes","Armes des forces de l'ordre","Strictement interdit de voler une arme d'un agent LSPD / SASP, même après une mort RP. Lors d'événements prévus (convoi d'armes), le loot n'est autorisé que dans les coffres.","police arme loot");
+r("vente-armes","illegal","Armes","Vente d'armes","Autorisée mais de manière RP : une arme ne se vend pas comme une voiture. Conséquences lourdes possibles (police ou GunLead).","vendre arme gunlead");
+r("visibilite","illegal","Armes","Armes et masques visibles","Une arme portée dans le dos est visible par les personnes proches. Un contrôle de police est alors légitime, tout comme pour le port d'un masque.","dos controle");
+r("agressions","illegal","Agressions","Braquer ou fouiller un joueur","- Interdit sans un minimum de raison RP (pas besoin de raison pour un PNJ)\n- Jusqu'à 50 % des consommables, jamais les armes\n- Interdit de forcer un joueur à aller à un ATM ou une banque\n- Interdit de forcer un joueur gradé à utiliser sa tablette (effacer un casier, faire un rapport…)\n- Interdit de braquer un joueur sur son lieu de travail (récolte, traitement, vente) ou en service. Sur le trajet : seulement avec une vraie raison RP","braquage fouille atm tablette 50%");
+r("kidnapping","illegal","Kidnapping & prise d'otage","Kidnapping et otages","Interdit de kidnapper une personne en service parce qu'elle fait son métier (sauf dossier validé). Otages maximum :\n- Bijouterie : 3 à 6\n- Banque : 3 à 6\n- Supérette : 1 à 3\n- Pacific Bank : 6 à 12\nFaux otages (complices) interdits sauf accord staff. Interdit de prendre en otage / dépouiller un blessé par balle en cours de réanimation.","otage braquage banque bijouterie superette pacific");
+r("vol","illegal","Vol, racket & arnaque","Vol","- Interdit de voler les véhicules / matériels des services publics (sauf véhicules de police avec raison RP, voir additif) et les citoyens en zone safe\n- Chacun est responsable de son véhicule : aucun remboursement d'objets volés dans le coffre ou la boîte à gants\n- Interdit de voler armes à feu et armes blanches sur une personne\n- Véhicule abandonné (personne autour depuis 5 min) : vol autorisé au chalumeau (usage unique)\n- Interdit de voler sans raison RP","voler chalumeau voiture");
+r("racket","illegal","Vol, racket & arnaque","Racket d'entreprise","Interdit aux citoyens. Seuls les groupes officiels peuvent racketter une entreprise située dans leur zone revendiquée, avec un dossier validé par le staff. Maximum 50 000 $ par semaine, toujours contre une contrepartie (protection…).","racket entreprise 50000 protection");
+r("arnaque","illegal","Vol, racket & arnaque","Arnaque","Tous types d'arnaques de biens (voitures, armes…) sont interdits.","escroquerie");
+
+/* ===== CRÉATION ===== */
+r("gang-eligibilite","creation","Création d'un gang","Conditions pour le fondateur","- Au moins 30 heures de jeu sur le serveur\n- Aucun antécédent lourd (bans récents, avertissements trop nombreux)","fondateur heures creer gang","A");
+r("gang-tresorerie","creation","Création d'un gang","Investissement financier","La création est gratuite, mais une trésorerie de 500 000 $ peut être exigée comme fonds de départ. Ce montant peut être mis en commun virtuellement le temps du dossier.","argent 500000 tresorerie","A");
+r("gang-dossier","creation","Création d'un gang","Dossier RP obligatoire","À déposer en ticket sur le Discord :\n- Lore : origines, motivations, valeurs, activités illégales visées\n- QG : emplacement cohérent proposé (attribution selon disponibilités et équilibrage)\n- Roster : au moins 3 membres fondateurs actifs\n- Vélléités RP : comment vous allez animer le serveur et interagir avec les autres factions","ticket lore qg roster base","A");
+
+/* ===== INDÉPENDANTS ===== */
+r("indep-base","independants","Général","Groupe d'indépendants","Maximum 10 membres, avec au moins un leader. Pas de revendication de drogue ni de point chaud. Fear obligatoire face aux groupes officiels : une guerre ouverte est inconcevable.","independant leader 10");
+r("indep-revendication","independants","Revendication","Conditions de revendication","- Au moins 5 personnes\n- Annonce uniquement dans #revendications indépendants (Discord ILLEGAL)\n- Template officiel : nom du groupe, nom du lead + ID unique + ID Discord, liste complète des membres avec ID\nSans revendication : pas de confrontation ni de guerre avec les groupes officiels.","revendiquer template discord");
+r("indep-conflit","independants","Conflits","Conflit avec un MC ou un gang","Un groupe revendiqué peut entrer en conflit avec un MC ou un gang, avec un dossier de guerre complet soumis aux référents illégaux (motifs, enjeux, preuves, déroulé). S'attaquer à une organisation fait du groupe la cible prioritaire de toutes les organisations.","guerre dossier");
+r("indep-armes","independants","Limitations","Armes lourdes","Armes lourdes strictement interdites aux indépendants. Le GunLead doit reprendre les armes lourdes vendues à des indépendants, au même prix.","arme lourde gunlead");
+r("indep-drogue","independants","Limitations","Drogue et laboratoires","Interdit de camper, d'entrer ou de fabriquer dans les laboratoires. Récolte autorisée uniquement pour le compte / la revente à des groupes officiels. Sanction : incohérence RP + retrait de revendication.","labo recolte");
+r("indep-marche","independants","Limitations","Marché noir","Les indépendants peuvent tenir un marché et revendiquer la vente de marchandises de marché noir (perceuses, cartes Paletto…).","black market perceuse");
+r("indep-alliances","independants","Relations","Alliances et missions","- Alliance formelle avec un groupe officiel interdite\n- Payer une orga pour sa protection est possible (preuve de paiement sur demande)\n- Une orga peut confier des missions ponctuelles (colis, surveillance, escorte), jamais permanentes ni sur point chaud / labo\n- Travailler pour un groupe officiel est permis, mais pas apparaître sur une scène illégale comme membre de ce groupe","prestation protection mission");
+r("indep-vehicules","independants","Relations","Véhicules et Discord","Les véhicules suivent la procédure de la catégorie Informations du Discord ILLEGAL. Pas de Discord fourni par le staff ; un Discord privé est possible mais le staff n'en est pas responsable.","voiture discord");
+
+/* ===== ADDITIFS ===== */
+r("add-alliances","additifs","Additifs","Alliances interdites entre gangs","Les alliances sont interdites entre membres de gangs différents : pas de braquage, farm illégal, action illégale ou aide commune. Seules les alliances montées par dossier et validées par le staff sont autorisées.\nAlliances en cours : aucune.","alliance gang allie dossier","A",{nouveau:true});
+r("add-atm","additifs","Additifs","Otage au distributeur","Interdit de prendre un joueur en otage pour l'emmener retirer de l'argent à un distributeur.","atm distributeur banque retrait","A",{nouveau:true});
+r("add-vehpolice","additifs","Additifs","Vol de véhicules de police","Possible avec une raison RP, jamais pour troller. En contrepartie, la police peut tirer à vue, sans sommation.","voiture police voler tir a vue","A",{nouveau:true});
+r("add-saisie","additifs","Additifs","Saisie après une fusillade","Un joueur neutralisé lors d'un échange de tirs se fait saisir toutes ses armes et items illégaux (drogue), directement sur le corps. Le cash au-delà de 50 000 $ est aussi saisi.\nProcédure :\n- Menotter le corps\n- Confisquer toutes les armes et objets illégaux\n- Démenotter\n- Laisser le corps : il part immédiatement avec les EMS, hors scène RP\nPas de poursuite à l'hôpital (GAV, procédure) après réanimation. Agissez vite (respawn PNJ possible) mais pas en plein feu. S'applique aussi entre joueurs (menottes / serflex nécessaires).","saisie fusillade loot cadavre corps menotte serflex arme drogue 50000","A",{nouveau:true});
+r("add-menotte","additifs","Additifs","Corps menotté","Strictement interdit de laisser un corps mort menotté.","menotte serflex cadavre","A",{nouveau:true});
+r("add-hopital","additifs","Additifs","Rappel : victimes et hôpital","- Interdit d'aller à l'hôpital pour reprendre contact avec vos victimes\n- Interdit pour une victime morte de revenir sur la scène RP","hopital victime nlr retour","A",{nouveau:true});
+
+/* ===== LSPD ===== */
+r("lspd-deonto","lspd","Déontologie","Déontologie et exemplarité","- Insultes HRP, trash talk et abus interdits ; sang-froid et courtoisie\n- Arrestation ou contravention sans un minimum de dialogue interdite\n- RP ripou (corruption, détournement de saisies, complicité) interdit sauf dossier validé par l'État-Major et l'administration\n- Ordres des supérieurs obligatoires ; les contestations se règlent au poste, en privé","ripou corruption respect","L");
+r("lspd-force","lspd","Usage de la force","Gradation de la force","Réponse adaptée à la menace :\n- 1. Présence et dissuasion\n- 2. Injonctions verbales\n- 3. Contrainte à mains nues / bâton\n- 4. Létalité réduite (taser, beanbag)\n- 5. Arme à feu","taser beanbag force","L");
+r("lspd-sommation","lspd","Usage de la force","Sommations","Avant tout tir : deux sommations claires et distinctes (portée de voix, touche F11) ou un tir de semonce non dirigé. Le joueur qui entend une sommation doit réagir (obéir, fuir…) ; faire semblant de ne pas entendre = PowerGaming. Un policier qui contourne la règle est sanctionné.\nSans sommation : seulement en riposte à des tirs ou face à une menace mortelle imminente.","sommation f11 tir semonce legitime defense","L");
+r("lspd-taser","lspd","Usage de la force","Taser","Interdit sur une personne au volant d'un véhicule en marche (ou dans un véhicule) et sur une personne nageant en eau profonde.","taser voiture","L");
+r("lspd-conduite","lspd","Poursuites","Conduite des agents","Conduite réaliste : pas de tremplins, pas de terrain inadapté sans tout-terrain, pas de chocs volontaires dans les obstacles.","conduite poursuite","L");
+r("lspd-pit","lspd","Poursuites","Manœuvre PIT","Interdite avant 5 à 10 minutes de poursuite active (jamais en centre-ville au bout de 5 minutes). Validée par le superviseur, sous 80 km/h, hors zone dense. Ne pas confondre un PIT avec la désynchronisation d'un joueur.","pit tvi poursuite 80","L");
+r("lspd-pneus","lspd","Poursuites","Tirs sur les pneus","Interdits en début de poursuite. Dernier recours sur ordre du responsable de scène, après refus d'obtempérer prolongé et mise en danger de tiers.","pneu tir","L");
+r("lspd-helico","lspd","Poursuites","Hélicoptère","Surveillance, filature et infos radio uniquement. Interdit de tirer depuis l'appareil ou de descendre poser des herses / bloquer une route.","helico air support herse","L");
+r("lspd-controle","lspd","Contrôles","Motif de contrôle et fouille","Aucun contrôle ou fouille sans motif valable (infraction constatée, flagrant délit, arme visible, signalement précis), sauf DEFCON 4 ou plus. Contrôles au faciès interdits. Hors fusillade, on ne confisque rien à une personne dans le coma ; après un échange de tirs, la saisie se fait sur le corps (voir additif).","fouille controle defcon faciès saisie","L");
+r("lspd-argent","lspd","Contrôles","Argent sale","Le liquide est présumé légal. Il est considéré comme sale au-delà de 50 000 $ ou s'il provient d'un flagrant délit de trafic.","argent sale cash 50000","L");
+r("lspd-gav","lspd","Contrôles","Garde à vue et traçabilité","Garde à vue / cellule : 60 minutes maximum, procédure comprise. Chaque arrestation, saisie ou amende est consignée au MDT (agent, prévenu, faits, pièces saisies, date/heure).","gav cellule prison mdt rapport 60","L");
+r("lspd-quartiers","lspd","Opérations","Quartiers revendiqués et points de drogue","Interdit d'entrer seul dans un quartier pour provoquer : motif sérieux ou flagrant délit, avec renforts. Interdit de chercher ou camper les points de drogue / illégaux (7 minutes maximum sur un point découvert). Un agent seul peut interpeller un membre qui le provoque.","quartier chaud point drogue camper 7 minutes","L");
+r("lspd-perquisition","lspd","Opérations","Mandats et perquisitions","Coffre fermé, propriété privée ou entrepôt : mandat signé par le DOJ ou validé par le haut-commandement / le staff.","mandat perquisition doj","L");
+r("lspd-descente","lspd","Opérations","Descente de zone","Raison RP solide, plan préparé, validation d'un Lieutenant minimum et au moins 8 agents coordonnés.","descente bouclage lieutenant","L");
+r("lspd-armement","lspd","Armement","Armement et dotation","Dotation standard : arme de poing, taser, bâton, lampe, menottes. Armes d'assaut et pompes réservées aux interventions lourdes ou au SWAT ; interdit de patrouiller à pied arme d'assaut dégainée. Matériel non cessible (ni vente, ni prêt, ni coffre perso). Départ du service : tout restituer, sinon dossier vol aggravé et wipe.","arme swat dotation demission","L");
+r("lspd-indics","lspd","Opérations","Indics","Les indics passent par des hauts gradés qui prennent le temps de vérifier les informations. Identité connue de l'État-Major seulement. Un indic est plus exposé à une mort RP.","indic informateur");
+r("lspd-mrp","lspd","Opérations","Mort RP d'un agent et des joueurs","Un agent peut prendre une mort RP s'il fait échouer une négociation ou met collègues / otages en danger. Les FDO peuvent faire un dossier de mort RP contre un joueur qui ne joue pas son fear, sans obligation de lui laisser une porte de sortie. Interaction inutile avec les FDO : sanction possible sans préavis.","mort rp fear negociation");
+r("fdo-citoyens","lspd","Face aux FDO","Ce que les citoyens doivent savoir","Les forces de l'ordre sont à craindre et leurs décisions respectées. Amendes impayées et accords non tenus peuvent mener à un jugement ou une mort RP. Privilégiez la fuite et la poursuite plutôt que l'affrontement. Plans mules uniquement avec des véhicules de catégorie VANS.","amende fuite mule van");
+
+/* ===== EMS ===== */
+r("ems-deonto","ems","Déontologie","Neutralité et serment","Les EMS soignent tout le monde, sans distinction d'affiliation. Refus de soin interdit. Soin mécanique sans échange proscrit : dialogue, questions et mise en scène obligatoires. Tenue réglementaire du grade obligatoire.","hippocrate soin neutralite","E");
+r("ems-ripou","ems","Déontologie","RP ripou EMS","Vol de médicaments, vente de matériel, fuite d'informations ou complicité avec l'illégal interdits par défaut. Dérogation : dossier validé par la direction hospitalière et l'administration.","ripou corruption","E");
+r("ems-fusillade","ems","Intervention","Fusillade en cours","Interdit d'entrer sur une fusillade en cours ; attendre la confirmation de fin par les FDO. Réanimer sous le feu = faute grave. Un joueur réanimé par erreur reste au sol sans parler. Personnel non armé : Fear RP obligatoire face à une menace.","gunfight reanimation","E");
+r("ems-bilan","ems","Prise en charge","Bilan et hospitalisation","Diagnostic avant toute injection ou réanimation ; /me obligatoire. Blessures graves (balles multiples, trauma crânien, fracture ouverte, brûlures) : stabilisation puis transport à l'hôpital. Patient dans le coma : on ne lui parle pas comme s'il était réveillé.","diagnostic me coma hopital","E");
+r("ems-patient","ems","Patients","Obligations des patients","- Décrire ses blessures en /me (ex : /me a 2 balles dans la jambe)\n- Suivre l'EMS à l'hôpital s'il le juge nécessaire et obéir à ses consignes\n- Respecter repos, immobilisations, arrêts de travail et interdictions (ex : pas de volant pendant 1 jour), sinon NoPain / PowerGaming\n- Présenter sa carte d'identité si demandé ; refus = appel au LSPD","patient identite facture me consigne");
+r("ems-hopital","ems","Patients","Autorité à l'hôpital","À l'hôpital, le personnel médical fait autorité : attente, zones stériles, dépôt des armes à l'entrée, pour les citoyens comme pour les agents.","hopital arme","E");
+r("ems-secret","ems","Patients","Secret médical","Dossiers confidentiels. Transmission au LSPD uniquement sur réquisition ou autorisation du DOJ.","dossier doj enquete","E");
+r("ems-vehicules","ems","Véhicules","Conduite et flotte","Conduite réaliste ; gyrophares et sirènes réservés aux vraies urgences. Usage personnel des ambulances interdit. Hélicoptère : zones difficiles ou extrême urgence, jamais pour le confort.","ambulance sirene helico","E");
+r("ems-facture","ems","Traçabilité","Registre et facturation","Chaque intervention est notée au MDT (praticien, victime, lésions, soins, date/heure). Facture obligatoire selon la grille ; encaisser sans facture = vol.","facture mdt registre","E");
+
+/* ===== ENTREPRISES ===== */
+r("ent-leads","entreprises","Entreprises","Leads et entreprises","Les Leads et Co-leads de groupes officiels (sauf MC) ne peuvent pas posséder d'entreprise whitelistée ni en être patron / co-patron. Exception : Lead et Co-lead des Ballas pour le LTD de Grove Street.","lead patron ballas ltd");
+r("ent-revendication","entreprises","Entreprises","Revendication de zones","Interdit de revendiquer ou camper un métier public. Un groupe officiel peut revendiquer au maximum une zone de récolte, un labo et la vente d'une seule drogue ; ou, sans drogue, le Gofast, le blanchiment et le marché noir.","gofast blanchiment marche noir zone");
+r("ent-runs","entreprises","Entreprises","Runs et véhicules","Runs avec véhicules d'entreprise, camions de location ou boutique (F7) uniquement. Véhicules d'entreprise interdits à usage personnel.","run camion f7");
+r("ent-gestion","entreprises","Entreprises","Gestion d'entreprise","- Un seul patron et un seul co-patron, présents sur le Discord inter-patrons\n- Entreprise non revendable ; changement de patron via le staff\n- Scène de recrutement obligatoire\n- Transactions tenues par écrit\n- Fermeture possible par le gouvernement (fisc, impôts, justice)\n- L'entreprise doit être active, pas au seul service d'un groupe","patron recrutement fermeture impot");
+r("ent-incentive","entreprises","Entreprises","Salaires et incentives","Respect de la grille de rémunération. Paiement des salaires et primes chaque dimanche soir au plus tard. Incentive hebdomadaire 75 000 $ max, mensuelle 100 000 $ max (cumulables).","salaire prime incentive dimanche");
+r("ent-economie","entreprises","Économie","Économie","Interdit de produire seulement pour son groupe : créez une vraie économie autour de vos produits. Commerce avec Cayo Perico autorisé.","commerce cayo");
+r("ent-patrons","entreprises","Patrons","Obligations des patrons","- Réunions toutes les deux semaines environ : présence obligatoire (ou un cadre mandaté). 2 absences de suite = avertissement, 3 avertissements = destitution possible\n- Recruter et proposer au moins deux soirées par semaine\n- Arrêter dans les 2 mois après la prise de poste : wipe + 2 mois d'interdiction\n- Inactif 2 semaines sans prévenir : wipe et blacklist\n- Départ du patron : 48 h pour un dossier de reprise interne\n- Aucune sanction dans les 60 jours pour devenir patron ; 2 mois d'attente après un départ volontaire","reunion soiree wipe blacklist 60 jours");
+r("ent-illegal","entreprises","Illégal","Métiers interdits d'illégal","Interdit de faire de l'illégal pour : EMS, SASP, gouvernement, FIB, DOJ (avocats, juges, procureurs), agence immobilière. Les employés d'entreprise le peuvent, mais l'entreprise et ses patrons peuvent être mis en cause (fermeture, amendes). Saboter ou menacer une entreprise concurrente est interdit.","ripou emploi immobilier doj sabotage");
+r("video","entreprises","Vidéo & stream","Vidéos et streams","Interdit de publier des vidéos composées uniquement de GunFights ou avec des musiques trolls. Maximum 45 % de scènes GF. Pendant une BDA, prévenir et obtenir l'accord des participants si vous êtes en live.","youtube twitch stream video bda 45");
+
+/* ===== POINTS À CLARIFIER ===== */
+const CONFLICTS = {
+ argent:{t:"Seuil de l'argent sale",d:"Le règlement serveur dit 10 000 $, le règlement LSPD et l'additif disent 50 000 $.",ids:["lspd-argent","add-saisie"]},
+ vehpolice:{t:"Vol de véhicules de police",d:"Le règlement serveur l'interdit totalement, l'additif l'autorise avec une raison RP.",ids:["vol-services","add-vehpolice","vol"]},
+ alliances:{t:"Alliances",d:"Le règlement serveur autorise des alliances orga + gang, l'additif les interdit sauf dossier validé.",ids:["alliances","add-alliances"]},
+ saisie:{t:"Saisie des armes sur un corps",d:"Le règlement serveur interdit de confisquer sur une personne dans le coma et de voler les armes ; l'additif impose la saisie sur le corps.",ids:["add-saisie","lspd-controle","armes-fdo-vol","gunfight"]},
+ descente:{t:"Effectif d'une descente",d:"Règlement serveur : 10 agents minimum. Règlement LSPD : 8 agents.",ids:["lspd-descente"]},
+ pit:{t:"Délai avant un PIT",d:"Règlement serveur : 10 minutes. Règlement LSPD : 5 à 10 minutes.",ids:["lspd-pit"]},
+ pneus:{t:"Tirs dans les pneus",d:"Règlement serveur : interdit sauf NoFear (avec rec). Règlement LSPD : dernier recours sur ordre du responsable.",ids:["lspd-pneus"]},
+};
+
+/* ===== MOTEUR ===== */
+const $ = s=>document.querySelector(s);
+const norm = s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+const esc = s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const SYN = {gf:"gunfight",fdo:"police",lspd:"police",sasp:"police",flic:"police",keuf:"police",mrp:"mort",perqui:"perquisition",gav:"garde",hosto:"hopital",tune:"argent",thune:"argent",caillasse:"argent",vehicule:"vehicule",caisse:"vehicule",voiture:"vehicule"};
+R.forEach(x=>{x.catName=CATS.find(c=>c.id===x.cat).name;x._t=norm(x.title);x._g=norm(x.tags+" "+x.sec+" "+x.catName);x._x=norm(x.text);});
+const ACC={a:"[aàâä]",e:"[eéèêë]",i:"[iîï]",o:"[oôö]",u:"[uùûü]",c:"[cç]"};
+function hl(html,terms){
+  if(!terms.length) return html;
+  const re=new RegExp("("+terms.map(t=>t.replace(/[.*+?^${}()|[\]\\]/g,"\\$&").replace(/[aeiouc]/g,m=>ACC[m])).join("|")+")","gi");
+  return html.split(/(<[^>]+>)/).map(p=>p.startsWith("<")?p:p.replace(re,"<mark>$1</mark>")).join("");
+}
+function body(text,terms){
+  const lines=text.split("\n");let h="",inUl=false;
+  for(const l of lines){
+    if(l.startsWith("- ")){if(!inUl){h+="<ul>";inUl=true}h+="<li>"+hl(esc(l.slice(2)),terms)+"</li>"}
+    else{if(inUl){h+="</ul>";inUl=false}h+="<p>"+hl(esc(l),terms)+"</p>"}
+  }
+  return h+(inUl?"</ul>":"");
+}
+function search(q){
+  const raw=norm(q).split(/[^a-z0-9$%]+/).filter(t=>t.length>1||/\d/.test(t));
+  if(!raw.length) return {terms:[],res:[]};
+  const res=[];
+  for(const x of R){
+    let s=0,ok=true;
+    for(const t of raw){
+      const alts=[t];if(SYN[t])alts.push(SYN[t]);
+      let best=0;
+      for(const a of alts){
+        if(x._t.includes(a))best=Math.max(best,x._t.split(/\W+/).includes(a)?10:6);
+        if(x._g.includes(a))best=Math.max(best,4);
+        if(x._x.includes(a))best=Math.max(best,2);
+      }
+      if(!best){ok=false;break}s+=best;
+    }
+    if(ok){if(x.nouveau)s+=1;res.push([s,x])}
+  }
+  res.sort((a,b)=>b[0]-a[0]);
+  return {terms:raw.flatMap(t=>SYN[t]?[t,SYN[t]]:[t]),res:res.map(r=>r[1])};
+}
+function card(x,terms){
+  const c=x.conflict&&CONFLICTS[x.conflict];
+  return `<article class="rule" id="${x.id}">
+    <div class="crumb">${esc(x.catName)} › ${esc(x.sec)} <span class="src">${SRC[x.src]}</span>${x.nouveau?'<span class="badge b-new">Additif</span>':''}${c?'<span class="badge b-warn">À clarifier</span>':''}</div>
+    <h3><a href="#${x.id}">${hl(esc(x.title),terms)}</a></h3>
+    <div class="body">${body(x.text,terms)}</div>
+    ${c?`<div class="note"><b>Contradiction :</b> ${esc(c.d)}</div>`:''}
+    <div class="actions"><button class="act" data-copy="${x.id}">Copier pour Discord</button></div>
+  </article>`;
+}
+let cat=null;
+function renderChips(){
+  $("#chips").innerHTML=[{id:null,name:"Tout"}].concat(CATS).map(c=>`<button class="chip" data-cat="${c.id??""}" aria-pressed="${cat===c.id}">${esc(c.name)}</button>`).join("");
+}
+function render(){
+  const q=$("#q").value.trim();renderChips();
+  const out=$("#out");
+  if(q){
+    let {terms,res}=search(q);
+    if(cat)res=res.filter(x=>x.cat===cat);
+    out.innerHTML=`<div class="meta">${res.length} règle${res.length>1?"s":""} pour « ${esc(q)} »${cat?" dans "+esc(CATS.find(c=>c.id===cat).name):""}</div>`+
+      (res.length?res.map(x=>card(x,terms)).join(""):`<div class="empty"><b>Aucune règle trouvée</b>Essaie un autre mot, plus court ou sans accent.<div class="hint">${["otage","pit","argent","alliance","coma"].map(w=>`<button data-q="${w}">${w}</button>`).join("")}</div></div>`);
+    return;
+  }
+  if(cat){
+    const list=R.filter(x=>x.cat===cat);let h="",last="";
+    for(const x of list){if(x.sec!==last){h+=`<h2 class="sec">${esc(x.sec)}</h2>`;last=x.sec}h+=card(x,[])}
+    out.innerHTML=`<div class="meta">${list.length} règles · ${esc(CATS.find(c=>c.id===cat).desc)}</div>`+h;return;
+  }
+  out.innerHTML=`<h2 class="sec">Catégories</h2><div class="cats">${CATS.map(c=>`<button class="cat" data-cat="${c.id}"><span class="n">${R.filter(x=>x.cat===c.id).length} règles</span><b>${esc(c.name)}</b><small>${esc(c.desc)}</small></button>`).join("")}</div>
+  <h2 class="sec">Recherches fréquentes</h2><div class="hint">${["prise d'otage","argent sale","pit","alliance","saisie","vol police","coma","sommation","racket","armes lourdes","reboot","création gang"].map(w=>`<button data-q="${w}">${w}</button>`).join("")}</div>
+  <h2 class="sec">Derniers additifs</h2>${R.filter(x=>x.nouveau).map(x=>card(x,[])).join("")}`;
+}
+function go(id){
+  const x=R.find(r=>r.id===id);if(!x)return;
+  $("#q").value="";cat=x.cat;render();
+  requestAnimationFrame(()=>{const el=document.getElementById(id);if(el){el.scrollIntoView({block:"start"});el.classList.add("flash");setTimeout(()=>el.classList.remove("flash"),2500)}});
+}
+function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(t._h);t._h=setTimeout(()=>t.hidden=true,1800)}
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-cat],[data-q],[data-go],[data-copy],a[href^='#']");if(!b)return;
+  if(b.dataset.copy!==undefined){
+    const x=R.find(r=>r.id===b.dataset.copy);
+    const txt=`📋 **${x.title}** — ${x.catName}\n${x.text.split("\n").map(l=>l.startsWith("- ")?"• "+l.slice(2):l).join("\n")}`;
+    const done=()=>toast("Règle copiée");
+    try{navigator.clipboard.writeText(txt).then(done,()=>fallback(txt))}catch(_){fallback(txt)}
+    function fallback(t){const a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();try{document.execCommand("copy");done()}catch(_){toast("Copie impossible")}a.remove()}
+    return;
+  }
+  if(b.dataset.go){go(b.dataset.go);return}
+  if(b.tagName==="A"){e.preventDefault();const id=b.getAttribute("href").slice(1);try{history.replaceState(null,"","#"+id)}catch(_){location.hash=id}go(id);return}
+  if(b.dataset.q){$("#q").value=b.dataset.q;cat=null;render();return}
+  if(b.dataset.cat!==undefined){cat=b.dataset.cat||null;if(b.classList.contains("cat"))$("#q").value="";render();scrollTo(0,0)}
+});
+$("#q").addEventListener("input",render);
+$("#home").addEventListener("click",()=>{$("#q").value="";cat=null;render()});
+$("#home").addEventListener("keydown",e=>{if(e.key==="Enter"){$("#q").value="";cat=null;render()}});
+document.addEventListener("keydown",e=>{if(e.key==="/"&&document.activeElement!==$("#q")){e.preventDefault();$("#q").focus()}if(e.key==="Escape"){$("#q").value="";render()}});
+window.addEventListener("hashchange",()=>{const id=location.hash.slice(1);if(id)go(id)});
+render();
+if(location.hash.length>1)go(location.hash.slice(1));
+</script>
+</body>
+</html>
